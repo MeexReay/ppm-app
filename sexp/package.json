@@ -1,8 +1,9 @@
 {
   "name": "sexp",
-  "version": "0.0.0-test+r1",
+  "version": "0.1.0",
   "description": "Simple Explorer Program",
   "author": "MeexReay",
+  "depends": ["quti"],
   "apps": [
     "sexp.js"
   ],
