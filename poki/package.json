@@ -1,9 +1,9 @@
 {
     "name": "poki",
-    "version": "0.1.1+r1",
+    "version": "0.1.1+r2",
     "description": "Poki desktop deck",
     "author": "MeexReay",
     "apps": [ "poki.js" ],
-    "configs": [ "poki.json" ],
-    "license": "WTFPL"
+    "configs": [ "poki.json" ]
+    "license": "WTFPL",
 }

@@ -2,7 +2,7 @@
   {
     "id": "zhelp",
     "title": "help page",
-    "icon": "app/mxwm/zhelp.png",
+    "icon": "https://raw.githubusercontent.com/MeexReay/ppm-app/refs/heads/main/mxwm/zhelp.png",
     "script": [
       "/app/zhelp.js"
     ]
@@ -10,7 +10,7 @@
   {
     "id": "sexp",
     "title": "sexp explorer",
-    "icon": "app/sexp/sexp.png",
+    "icon": "https://raw.githubusercontent.com/MeexReay/ppm-app/refs/heads/main/sexp/sexp.png",
     "script": [
       "/app/sexp.js"
     ]
@@ -18,7 +18,7 @@
   {
     "id": "zterm",
     "title": "zterm - terminal emulator",
-    "icon": "app/zterm/zterm.png",
+    "icon": "https://raw.githubusercontent.com/MeexReay/ppm-app/refs/heads/main/zterm/zterm.png",
     "script": [
       "/app/zterm.js"
     ]
