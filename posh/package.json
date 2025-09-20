@@ -1,6 +1,6 @@
 {
   "name": "posh",
-  "version": "0.1.2.2",
+  "version": "0.1.2.2+r1",
   "description": "Poshlosti Shell",
   "author": "MeexReay",
   "apps": [
@@ -11,5 +11,6 @@
   ],
   "configs": [
     "posh.json"
-  ]
+  ],
+  "license": "WTFPL"
 }
