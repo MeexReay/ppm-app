@@ -103,7 +103,7 @@ async function main(args) {
     let config = JSON.parse(readFile("/config/posh.json"))
     let prompt = config["prompt"]
     
-    await processShell(readFile("/config/poshrc"), [])
+    await processShell("/config/poshrc", [])
 
     while (true) {
         await writeStdout(prompt.replace("{cwd}", terminal.cwd))
