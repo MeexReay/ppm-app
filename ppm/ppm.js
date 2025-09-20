@@ -9,7 +9,10 @@ let config = JSON.parse(readFile("/config/ppm.json"))
 async function remove(name) {
     let pkg = await getInstalledPackage(name)
     if (pkg != null) {
+        let [fds, fdi] = await installFixDepends(name)
+        if (fds != 0) return fds
         await removePackage(name)
+        await removeFixDepends(fdi)
 
         await writeStdout(`Пакет ${pkg['name']} удален и все его конфиги тоже\n`)
         if ("depends" in pkg) {
@@ -49,7 +52,10 @@ async function listOutdated() {
 
 async function update(name) {
     for (const repo of config["repositories"]) {
+        let [fds, fdi] = await installFixDepends(name)
+        if (fds != 0) return fds
         let status = await updatePackage(name, repo+"/"+name)
+        await removeFixDepends(fdi)
 
         if (status == 0) {
             let pkg = await getInstalledPackage(name)
@@ -81,6 +87,39 @@ async function installDepends(pkg) {
     return 0
 }
 
+async function installFixDepends(pkg) {
+    let installed = []
+    
+    if ("fix_depends" in pkg) {
+        for (const dep of pkg.fix_depends) {
+            let to_install = await getInstalledPackage(dep) == null
+            let status = await updateOrInstall(dep)
+
+            if (status != 0) {
+                return [status, installed]
+            }
+
+            if (to_install) {
+                installed.push(dep)
+            }
+        }
+    }
+
+    return [0, installed]
+}
+
+async function removeFixDepends(installed) {
+    for (const dep of installed) {
+        let status = await remove(dep)
+
+        if (status != 0) {
+            return status
+        }
+    }
+    
+    return 0
+}
+
 async function updateOrInstall(name) {
     if (await getInstalledPackage(name) == null) {
         return await install(name) 
@@ -93,7 +132,10 @@ async function install(name) {
     for (const repo of config["repositories"]) {
         // await writeStdout(`Фетчим ${package} на репозитории ${repo}\n`)
 
+        let [fds, fdi] = await installFixDepends(name)
+        if (fds != 0) return fds
         let status = await installPackage(repo+"/"+name)
+        await removeFixDepends(fdi)
 
         if (status == 0) {
             let pkg = await getInstalledPackage(name)
