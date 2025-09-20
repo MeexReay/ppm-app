@@ -4,38 +4,93 @@
 
 */
 
-async function processCommand(command, args) {
+async function findExecutable(command, wants_ext, always_cwd) {
     let executable = command
     if (!executable.startsWith("/")) {
-        if (executable.includes("/")) {
+        if (executable.includes("/") || always_cwd) {
             executable = terminal.cwd + "/" + executable
         } else {
             executable = "/app/" + executable
         }
     }
-    if (!hasFile(executable) && hasFile(executable+".js")) {
-        executable = executable + ".js"
+    for (let ext of wants_ext) {
+        if (!hasFile(executable) && hasFile(executable + ext)) {
+            executable = executable + ext
+        }
     }
     executable = simplifyPath(executable)
-
     if (hasFile(executable)) {
+        return executable
+    } else {
+        return null
+    }
+}
+
+async function processCommand(command, args) {
+    let executable = await findExecutable(command, [".js",".sh",".posh"], false)
+    if (executable != null) {
         try {
             let code = await executeCommand([executable].concat(args), terminal).promise
             if (code != 0) {
                 await writeStdout("\nСтатус код: "+code+"\n")
             }
         } catch (e) {
+            console.log(e)
             await writeStdout("Не запустилася:\n"+e+"\n")
         }
     } else {
-        await writeStdout("Твоя команда "+executable+" не найдена :3\n")
+        await writeStdout("Твоя команда "+command+" не найдена :3\n")
     }
 }
 
+async function processArgs(args) {
+    let is_shell = true
+    let skip_keys = false
+    let command = []
+    
+    for (let arg of args) {
+        if (!skip_keys) {
+            if (arg == "-c") {
+                is_shell = false
+                skip_keys = true
+                continue
+            } else if (arg == "-h") {
+                await writeStdout("использование: posh [-c] [--] [команда] [аргументы]\nбез -с типа обычный .sh запускается\n")
+                return false
+            } else if (arg == "--") {
+                skip_keys = true
+                continue
+            }
+        }
+        
+        command.push(arg)
+    }
+
+    if (is_shell) {
+        let executable = await findExecutable(command[0], [".sh",".posh"], true)
+        if (executable != null) {
+            let script = readFile(executable)
+
+            for (let line of script.split("\n")) {
+                let words = line.split(" ")
+                await processCommand(words[0], words.slice(1))
+            }
+        } else {
+            await writeStdout("Твоя команда "+command[0]+" не найдена :3\n")
+        }
+        return false
+    } else {
+        await processCommand(command[0], command.slice(1))
+    }
+
+    return true
+}
+
 async function main(args) {
-    console.log(terminal)
     if (args.length > 1) {
-        await processCommand(args[1], args.slice(2))
+        if (!await processArgs(args.slice(1))) {
+            return 0
+        }
     }
 
     let history = [""]
