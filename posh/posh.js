@@ -50,6 +50,7 @@ async function processShell(command, args) {
 
         for (let line of script.split("\n")) {
             let words = line.split(" ")
+            if (words.length == 0 || line.trim() == "") continue
             await processCommand(words[0], words.slice(1))
         }
     } else {
