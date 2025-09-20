@@ -43,6 +43,20 @@ async function processCommand(command, args) {
     }
 }
 
+async function processShell(command, args) {
+    let executable = await findExecutable(command, [".sh",".posh"], true)
+    if (executable != null) {
+        let script = readFile(executable)
+
+        for (let line of script.split("\n")) {
+            let words = line.split(" ")
+            await processCommand(words[0], words.slice(1))
+        }
+    } else {
+        await writeStdout("Твоя команда "+command[0]+" не найдена :3\n")
+    }
+}
+
 async function processArgs(args) {
     let is_shell = true
     let skip_keys = false
@@ -67,17 +81,7 @@ async function processArgs(args) {
     }
 
     if (is_shell) {
-        let executable = await findExecutable(command[0], [".sh",".posh"], true)
-        if (executable != null) {
-            let script = readFile(executable)
-
-            for (let line of script.split("\n")) {
-                let words = line.split(" ")
-                await processCommand(words[0], words.slice(1))
-            }
-        } else {
-            await writeStdout("Твоя команда "+command[0]+" не найдена :3\n")
-        }
+        await processShell(command[0], command.slice(1))
         return false
     } else {
         await processCommand(command[0], command.slice(1))
@@ -98,12 +102,8 @@ async function main(args) {
 
     let config = JSON.parse(readFile("/config/posh.json"))
     let prompt = config["prompt"]
-    let startup = config["startup"]
-
-    for (let command of startup) {
-        let args = command.split(" ")
-        await processCommand(args[0], args.slice(1))
-    }
+    
+    await processShell(readFile("/config/poshrc"), [])
 
     while (true) {
         await writeStdout(prompt.replace("{cwd}", terminal.cwd))
