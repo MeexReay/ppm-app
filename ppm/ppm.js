@@ -9,7 +9,7 @@ let config = JSON.parse(readFile("/config/ppm.json"))
 async function remove(name) {
     let pkg = await getInstalledPackage(name)
     if (pkg != null) {
-        let [fds, fdi] = await installFixDepends(name)
+        let [fds, fdi] = await installFixDepends(pkg)
         if (fds != 0) return fds
         await removePackage(name)
         await removeFixDepends(fdi)
@@ -52,14 +52,19 @@ async function listOutdated() {
 
 async function update(name) {
     for (const repo of config["repositories"]) {
-        let [fds, fdi] = await installFixDepends(name)
+        let pkg = await getInstalledPackage(name)
+
+        if (pkg == null) {
+            await writeStdout("чувак пакет не найден\n")
+            return 1
+        }
+
+        let [fds, fdi] = await installFixDepends(pkg)
         if (fds != 0) return fds
         let status = await updatePackage(name, repo+"/"+name)
         await removeFixDepends(fdi)
 
         if (status == 0) {
-            let pkg = await getInstalledPackage(name)
-
             await installDepends(pkg)
 
             await writeStdout(`Пакет ${pkg['name']}-${pkg['version']} обновлен\n`)
@@ -132,7 +137,7 @@ async function install(name) {
     for (const repo of config["repositories"]) {
         // await writeStdout(`Фетчим ${package} на репозитории ${repo}\n`)
 
-        let [fds, fdi] = await installFixDepends(name)
+        let [fds, fdi] = await installFixDepends(await fetchPackage(repo+"/"+name))
         if (fds != 0) return fds
         let status = await installPackage(repo+"/"+name)
         await removeFixDepends(fdi)
