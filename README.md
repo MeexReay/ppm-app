@@ -52,3 +52,5 @@ to `package.json` or updated default configs, then you have to increase rel-vers
 -   "version": "0.1.0+r1"
 }
 ```
+
+Read more about packaging: [PACKAGING.md](PACKAGING.md)
