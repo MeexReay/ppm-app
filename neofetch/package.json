@@ -1,7 +1,8 @@
 {
     "name": "neofetch",
-    "version": "0.1.4",
+    "version": "0.1.4+r1",
     "description": "neofetch damn",
     "author": "MeexReay",
-    "apps": [ "neofetch.js" ]
+    "apps": [ "neofetch.js" ],
+    "license": "WTFPL"
 }

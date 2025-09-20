@@ -1,8 +1,9 @@
 {
     "name": "ppm",
-    "version": "0.1.7+r2",
+    "version": "0.1.7+r3",
     "description": "Poshliy Package Manager",
     "author": "MeexReay",
     "apps": [ "ppm.js" ],
-    "configs": [ "ppm.json" ]
+    "configs": [ "ppm.json" ],
+    "license": "WTFPL"
 }

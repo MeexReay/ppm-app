@@ -1,9 +1,10 @@
 {
   "name": "hello",
-  "version": "0.1.5",
+  "version": "0.1.5+r1",
   "description": "Hello Message",
   "author": "MeexReay",
   "apps": [
     "hello.js"
-  ]
+  ],
+  "license": "WTFPL"
 }

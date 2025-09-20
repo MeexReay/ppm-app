@@ -1,10 +1,11 @@
 {
   "name": "quti",
-  "version": "0.1.0",
+  "version": "0.1.0+r1",
   "description": "Qute User Temmie Interfaces",
   "author": "MeexReay",
   "apps": [
     "quti.js",
     "quti-example.js"
-  ]
+  ],
+  "license": "WTFPL"
 }

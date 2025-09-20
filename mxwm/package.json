@@ -1,9 +1,10 @@
 {
     "name": "mxwm",
-    "version": "0.1.3",
+    "version": "0.1.3+r1",
     "description": "Mega eXtreme Window Manager",
     "author": "MeexReay",
     "apps": [ "zcom.js", "startz.js", "zhelp.js" ],
     "depends": [ "poki", "zterm", "sexp" ],
-    "configs": [ "mxwm.json" ]
+    "configs": [ "mxwm.json" ],
+    "license": "WTFPL"
 }

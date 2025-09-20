@@ -1,7 +1,8 @@
 {
     "name": "vget",
-    "version": "0.1.0",
+    "version": "0.1.0+r1",
     "description": "Vulgar get",
     "author": "MeexReay",
-    "apps": [ "vget.js" ]
+    "apps": [ "vget.js" ],
+    "license": "WTFPL"
 }
