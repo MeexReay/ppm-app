@@ -1,0 +1,10 @@
+{
+  "name": "quti",
+  "version": "0.1.0",
+  "description": "Qute User Temmie Interfaces",
+  "author": "MeexReay",
+  "apps": [
+    "quti.js",
+    "quti-example.js"
+  ]
+}
