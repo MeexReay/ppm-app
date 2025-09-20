@@ -1,5 +1,5 @@
 {
     "repositories": [
-        "https://github.com/MeexReay/ppm-app/blob/main",
+        "https://raw.githubusercontent.com/MeexReay/ppm-app/refs/heads/main",
     ]
 }
