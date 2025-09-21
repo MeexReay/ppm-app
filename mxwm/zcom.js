@@ -35,7 +35,7 @@ function createWindow(options) {
     "onupdate": options["onupdate"] || (() => {}),
     "decorated": "decorated" in options ? options["decorated"] : true,
     "selectable": "selectable" in options ? options["selectable"] : true,
-    "closable": "closable" in options ? options["closable"] : true,
+    "closeable": "closable" in options ? options["closable"] : ("closeable" in options ? options["closeable"] : true),
     "movable": "movable" in options ? options["movable"] : true,
     "resizable": "resizable" in options ? options["resizable"] : true,
     "min_width": options["min_width"] || options["minwidth"] || 0,

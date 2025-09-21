@@ -23,7 +23,8 @@ async function drawScreen(ctx) {
                 win.y,
                 win.width,
                 win.height,
-                win.title
+                win.title,
+                win.closeable
             )
         }
         
@@ -31,7 +32,7 @@ async function drawScreen(ctx) {
     }
 }
 
-async function drawWindowDecorations(ctx, is_selected, x, y, width, height, title) {
+async function drawWindowDecorations(ctx, is_selected, x, y, width, height, title, closeable) {
     const borderWidth = 2;
 
     const outerX = x - borderWidth;
@@ -50,6 +51,17 @@ async function drawWindowDecorations(ctx, is_selected, x, y, width, height, titl
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
     ctx.fillText(title, titleX, titleY);
+
+    if (closeable) {
+        ctx.fillStyle = is_selected ? "#d4a3a3" : "#a3d4a3";
+        ctx.fillRect(outerX + outerWidth - 37, outerY + 2, 35, headerHeight - 2)
+    
+        ctx.fillStyle = "#222";
+        ctx.font = "bold 18px terminus";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+        ctx.fillText(" X ", outerX + outerWidth - 33, outerY + 4);
+    }
 }
 
 async function onStart(screen_ctx) {
@@ -97,7 +109,7 @@ async function onKeyDown(ctx, key) {
     }
     
     let to_close = getWindow(getSelected())
-    if (to_close != null && to_close.closable &&
+    if (to_close != null && to_close.closeable &&
         (isPressed("Alt") || isPressed("Meta")) &&
         isPressed("Shift") &&
         isPressed("C")) {
@@ -136,8 +148,11 @@ let dragging_window = null
 let resizing_window = null
 
 function isMouseOnHeader(window) {
-    return window.x < mouse_position[0] && mouse_position[0] < window.x + window.width &&
-           window.y - headerHeight < mouse_position[1] && mouse_position[1] < window.y
+    return window.x < mouse_position[0] &&
+           mouse_position[0] < window.x + window.width &&
+           window.y - headerHeight < mouse_position[1] &&
+           mouse_position[1] < window.y &&
+           !isMouseOnClose(window)
 }
 
 function isMouseInside(window) {
@@ -152,6 +167,13 @@ function isMouseOnCorner(window) {
            window.x + window.width + 15 > mouse_position[0] &&
            window.y + window.height - 15 < mouse_position[1] &&
            window.y + window.height + 15 > mouse_position[1]
+}
+
+function isMouseOnClose(window) {
+    return window.x + window.width - 35 < mouse_position[0] &&
+           window.x + window.width > mouse_position[0] &&
+           window.y - 24 < mouse_position[1] &&
+           window.y - 2 > mouse_position[1]
 }
 
 async function onMouseDown(ctx, button) {
@@ -196,6 +218,21 @@ async function onMouseDown(ctx, button) {
                 moveWindowToTop(window.wid)
             }
             window.onmousedown(button)
+            return true
+        }
+        if (isMouseOnClose(window) && window.closeable) {
+            let was_selected = getSelected() == window.wid
+            signalWindow(window.wid, 9)
+            closeWindow(window.wid)
+            if (was_selected) {
+                let list_windows = listWindows()
+                if (list_windows.length > 0) {
+                    let last_window = list_windows[list_windows.length - 1]
+                    if (last_window.selectable) {
+                        setSelected(last_window.wid)
+                    }
+                }
+            }
             return true
         }
         return false
@@ -293,6 +330,10 @@ async function onMouseMove(ctx, x, y) {
         }
         if (window.resizable && isMouseOnCorner(window)) {
             cursor = "nwse-resize"
+            return true
+        }
+        if (window.closeable && isMouseOnClose(window)) {
+            cursor = "pointer"
             return true
         }
         return false
